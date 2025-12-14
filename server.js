@@ -417,7 +417,7 @@ app.post('/api/posts/like', (req, res) => {
 
 // 삼행시 작성 API
 app.post('/api/acrostics', (req, res) => {
-    const { name, lines, author, authorId, rc, isPublic } = req.body;
+    const { name, lines, author, authorId, rc, isPublic, authorTeamId } = req.body;
 
     if (!name || !lines || !author || !authorId || !rc) {
         return res.status(400).json({ success: false, message: '모든 정보를 입력해주세요.' });
@@ -432,6 +432,7 @@ app.post('/api/acrostics', (req, res) => {
         authorId,
         rc,
         isPublic: isPublic !== false, // 기본값 true
+        authorTeamId: authorTeamId || null, // 작성자의 팀 ID
         createdAt: new Date().toISOString()
     };
 
@@ -443,7 +444,7 @@ app.post('/api/acrostics', (req, res) => {
 
 // 삼행시 목록 조회 API
 app.get('/api/acrostics', (req, res) => {
-    const { rc, publicOnly } = req.query;
+    const { rc, publicOnly, teamId, userId } = req.query;
     let acrostics = readAcrostics();
 
     // RC 필터링
@@ -451,8 +452,16 @@ app.get('/api/acrostics', (req, res) => {
         acrostics = acrostics.filter(acrostic => acrostic.rc === rc);
     }
 
-    // 공개 삼행시만 필터링
-    if (publicOnly === 'true') {
+    // 공개/비공개 필터링 (팀 기반)
+    if (teamId && userId) {
+        // 팀이 있는 경우: 공개 삼행시 + 같은 팀의 비공개 삼행시
+        acrostics = acrostics.filter(acrostic => {
+            if (acrostic.isPublic) return true; // 공개는 모두 표시
+            // 비공개는 같은 팀만 표시
+            return acrostic.authorTeamId && acrostic.authorTeamId === parseInt(teamId);
+        });
+    } else {
+        // 팀이 없는 경우: 공개 삼행시만
         acrostics = acrostics.filter(acrostic => acrostic.isPublic === true);
     }
 

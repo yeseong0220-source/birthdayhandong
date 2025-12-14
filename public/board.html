@@ -995,7 +995,8 @@
                         author: currentUser.nickname,
                         authorId: currentUser.id,
                         rc: currentUser.rc,
-                        isPublic
+                        isPublic,
+                        authorTeamId: currentUser.teamId || null
                     })
                 });
 
@@ -1018,7 +1019,8 @@
         // 삼행시 목록 로드
         async function loadAcrostics() {
             try {
-                const response = await fetch(`/api/acrostics?rc=${encodeURIComponent(currentUser.rc)}`);
+                const teamParam = currentUser.teamId ? `&teamId=${currentUser.teamId}&userId=${currentUser.id}` : '';
+                const response = await fetch(`/api/acrostics?rc=${encodeURIComponent(currentUser.rc)}${teamParam}`);
                 const data = await response.json();
 
                 if (data.success) {
