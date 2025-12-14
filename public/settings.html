@@ -427,7 +427,7 @@
     <script>
         let currentUser = null;
 
-        window.onload = function() {
+        window.onload = async function() {
             const userStr = localStorage.getItem('user');
             if (!userStr) {
                 alert('로그인이 필요합니다.');
@@ -436,6 +436,20 @@
             }
 
             currentUser = JSON.parse(userStr);
+
+            // 서버에서 최신 사용자 정보 가져오기
+            try {
+                const response = await fetch(`/api/user/${currentUser.id}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // localStorage 업데이트
+                    currentUser = data.user;
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                }
+            } catch (error) {
+                console.error('사용자 정보 로드 실패:', error);
+            }
 
             if (!currentUser.nickname || !currentUser.rc) {
                 alert('먼저 프로필을 설정해주세요.');

@@ -562,6 +562,31 @@ app.get('/api/teams/:id', (req, res) => {
     }
 });
 
+// 특정 사용자 정보 조회 API
+app.get('/api/user/:id', (req, res) => {
+    const userId = req.params.id;
+    const users = readUsers();
+    const user = users.find(u => u.id === userId);
+
+    if (user) {
+        res.json({
+            success: true,
+            user: {
+                id: user.id,
+                username: user.username,
+                name: user.name,
+                nickname: user.nickname || null,
+                rc: user.rc || null,
+                teamId: user.teamId || null,
+                teamName: user.teamName || null,
+                emoji: user.emoji || ''
+            }
+        });
+    } else {
+        res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+    }
+});
+
 // 사용자 목록 조회 API (팀원 확인용)
 app.get('/api/users', (req, res) => {
     const users = readUsers();
