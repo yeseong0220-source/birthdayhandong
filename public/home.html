@@ -449,7 +449,7 @@
             const emoji = currentUser.emoji || '';
             document.getElementById('userInfo').textContent = `${emoji} ${currentUser.nickname}님`;
             document.getElementById('welcomeMsg').textContent =
-                `${emoji} ${currentUser.nickname}님, Sprout Handong에 오신 것을 환영합니다!`;
+                `${emoji} ${currentUser.nickname}님`;
             const teamInfo = currentUser.teamName ? ` | 팀: ${currentUser.teamName}` : '';
             document.getElementById('rcBadge').textContent = currentUser.rc + teamInfo;
 

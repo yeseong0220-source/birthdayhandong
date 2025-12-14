@@ -198,9 +198,9 @@
 
             currentUser = JSON.parse(userStr);
 
-            // 이미 닉네임이 있으면 게시판으로 이동
+            // 이미 닉네임이 있으면 메인으로 이동
             if (currentUser.nickname) {
-                window.location.href = 'board.html';
+                window.location.href = 'main.html';
             }
 
             setupEventListeners();
@@ -314,7 +314,7 @@
 
                     showMessage('프로필 설정 완료!', 'success');
                     setTimeout(() => {
-                        window.location.href = 'home.html';
+                        window.location.href = 'main.html';
                     }, 1000);
                 } else {
                     showMessage(data.message, 'error');

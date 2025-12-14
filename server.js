@@ -713,6 +713,7 @@ app.post('/api/leave-team', (req, res) => {
 
 // 서버 시작
 initDataFiles();
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행중입니다.`);
+    console.log(`같은 네트워크의 다른 기기에서는 http://<내컴퓨터IP>:${PORT} 로 접속하세요.`);
 });
