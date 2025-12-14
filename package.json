@@ -1,14 +1,14 @@
 {
-  "name": "login-board",
+  "name": "sprout-handong",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sprout Handong - RC community platform for Handong University students",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["handong", "RC", "community", "board"],
+  "author": "Sprout Handong Team",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {

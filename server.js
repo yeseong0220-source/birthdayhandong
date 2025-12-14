@@ -473,6 +473,52 @@ app.get('/api/acrostics/:id', (req, res) => {
     }
 });
 
+// 게시글 삭제 API
+app.delete('/api/posts/:id', (req, res) => {
+    const postId = parseInt(req.params.id);
+    const { userId } = req.body;
+
+    let posts = readPosts();
+    const postIndex = posts.findIndex(p => p.id === postId);
+
+    if (postIndex === -1) {
+        return res.status(404).json({ success: false, message: '게시글을 찾을 수 없습니다.' });
+    }
+
+    // 작성자만 삭제 가능
+    if (posts[postIndex].authorId !== userId) {
+        return res.status(403).json({ success: false, message: '삭제 권한이 없습니다.' });
+    }
+
+    posts.splice(postIndex, 1);
+    writePosts(posts);
+
+    res.json({ success: true, message: '게시글이 삭제되었습니다.' });
+});
+
+// 삼행시 삭제 API
+app.delete('/api/acrostics/:id', (req, res) => {
+    const acrosticId = parseInt(req.params.id);
+    const { userId } = req.body;
+
+    let acrostics = readAcrostics();
+    const acrosticIndex = acrostics.findIndex(a => a.id === acrosticId);
+
+    if (acrosticIndex === -1) {
+        return res.status(404).json({ success: false, message: '삼행시를 찾을 수 없습니다.' });
+    }
+
+    // 작성자만 삭제 가능
+    if (acrostics[acrosticIndex].authorId !== userId) {
+        return res.status(403).json({ success: false, message: '삭제 권한이 없습니다.' });
+    }
+
+    acrostics.splice(acrosticIndex, 1);
+    writeAcrostics(acrostics);
+
+    res.json({ success: true, message: '삼행시가 삭제되었습니다.' });
+});
+
 // 팀 목록 조회 API
 app.get('/api/teams', (req, res) => {
     const { rc } = req.query;

@@ -369,7 +369,7 @@
                 <li><a href="home.html" data-en="Home"><span class="menu-text">홈</span></a></li>
                 <li><a href="calendar.html" data-en="Memory Calendar"><span class="menu-text">추억 달력</span></a></li>
                 <li><a href="album.html" data-en="Album"><span class="menu-text">앨범</span></a></li>
-                <li><a href="birthday-board.html" data-en="Board"><span class="menu-text">게시판</span></a></li>
+                <li><a href="board.html" data-en="Board"><span class="menu-text">게시판</span></a></li>
             </ul>
 
             <div class="navbar-user">
@@ -405,10 +405,10 @@
         </div>
 
         <div class="features-grid">
-            <div class="feature-card" onclick="location.href='birthday-board.html'">
-                <div class="feature-icon">🎂</div>
+            <div class="feature-card" onclick="location.href='board.html'">
+                <div class="feature-icon">📝</div>
                 <h3>게시판</h3>
-                <p>같은 RC 친구들과 생일 축하 메시지와<br>삼행시를 공유하세요</p>
+                <p>같은 RC 친구들과 게시글과<br>삼행시를 공유하세요</p>
             </div>
 
             <div class="feature-card" onclick="location.href='calendar.html'">
@@ -494,7 +494,7 @@
             const sliderContainer = document.getElementById('postsSlider');
             sliderContainer.innerHTML = slides.map((post, index) => `
                 <div class="slide ${index === 0 ? 'active' : ''}" data-index="${index}">
-                    <div class="slide-title" onclick="location.href='birthday-board.html'">${escapeHtml(post.title)}</div>
+                    <div class="slide-title" onclick="location.href='board.html'">${escapeHtml(post.title)}</div>
                     <div class="slide-meta">작성자: ${escapeHtml(post.author)} | ${formatDate(post.createdAt)}</div>
                     <div class="slide-content">${escapeHtml(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</div>
                 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게시판</title>
+    <title>게시판 - Sprout Handong</title>
     <style>
         * {
             margin: 0;
@@ -17,33 +17,89 @@
             min-height: 100vh;
         }
 
-        .header {
+        /* 네비게이션 바 */
+        .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .header-content {
+        .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 20px;
         }
 
-        .header h1 {
+        .navbar-brand {
             font-size: 24px;
+            font-weight: 700;
+            padding: 20px 0;
+            cursor: pointer;
         }
 
-        .user-info {
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 0;
+        }
+
+        .navbar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 20px 20px;
+            display: block;
+            transition: background 0.3s;
+            position: relative;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .navbar-menu a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-menu a::after {
+            content: attr(data-en);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .navbar-menu a:hover::after {
+            opacity: 1;
+        }
+
+        .navbar-menu a:hover .menu-text {
+            opacity: 0;
+        }
+
+        .menu-text {
+            transition: opacity 0.3s;
+        }
+
+        .navbar-user {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .logout-btn {
+        .user-info {
+            font-size: 14px;
+        }
+
+        .settings-btn, .logout-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 1px solid white;
@@ -51,29 +107,34 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
+            font-size: 14px;
+            text-decoration: none;
         }
 
-        .logout-btn:hover {
+        .settings-btn:hover, .logout-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* 컨테이너 */
         .container {
             max-width: 1200px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
+        /* 글 작성 섹션 */
         .write-section {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
         .write-section h2 {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: #333;
+            font-size: 22px;
         }
 
         .form-group {
@@ -82,7 +143,7 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #555;
             font-weight: 500;
         }
@@ -95,10 +156,17 @@
             border-radius: 5px;
             font-size: 14px;
             font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         .form-group textarea {
-            min-height: 150px;
+            min-height: 120px;
             resize: vertical;
         }
 
@@ -118,9 +186,10 @@
             transform: translateY(-2px);
         }
 
+        /* 게시글 섹션 */
         .posts-section {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -128,40 +197,93 @@
         .posts-section h2 {
             margin-bottom: 20px;
             color: #333;
+            font-size: 22px;
         }
 
         .post-item {
             border-bottom: 1px solid #eee;
             padding: 20px 0;
-            cursor: pointer;
             transition: background 0.2s;
         }
 
         .post-item:hover {
             background: #f9f9f9;
-            padding: 20px 10px;
-            margin: 0 -10px;
-            border-radius: 5px;
+            padding: 20px 15px;
+            margin: 0 -15px;
+            border-radius: 8px;
         }
 
         .post-item:last-child {
             border-bottom: none;
         }
 
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
         .post-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .post-title:hover {
+            color: #667eea;
+        }
+
+        .heart-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .heart-btn.liked {
+            color: #e74c3c;
+        }
+
+        .heart-count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
         }
 
         .post-meta {
             font-size: 14px;
             color: #888;
+            margin-bottom: 8px;
         }
 
         .post-content-preview {
-            margin-top: 10px;
             color: #666;
             font-size: 14px;
             line-height: 1.6;
@@ -169,10 +291,12 @@
 
         .no-posts {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
             color: #999;
+            font-size: 16px;
         }
 
+        /* 모달 */
         .modal {
             display: none;
             position: fixed;
@@ -180,8 +304,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
         }
 
         .modal-content {
@@ -190,18 +314,19 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 800px;
+            padding: 35px;
+            border-radius: 15px;
+            max-width: 700px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 2px solid #eee;
@@ -211,18 +336,21 @@
             font-size: 24px;
             font-weight: 600;
             color: #333;
+            flex: 1;
+            margin-right: 20px;
         }
 
         .close-btn {
             background: none;
             border: none;
-            font-size: 30px;
+            font-size: 32px;
             cursor: pointer;
             color: #999;
             padding: 0;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             line-height: 1;
+            transition: color 0.3s;
         }
 
         .close-btn:hover {
@@ -232,19 +360,21 @@
         .modal-meta {
             font-size: 14px;
             color: #888;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .modal-body {
             line-height: 1.8;
             color: #444;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 15px;
         }
 
         .message {
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
             display: none;
         }
@@ -260,38 +390,267 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+        /* 삼행시 섹션 */
+        .acrostic-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .acrostic-section h2 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .acrostic-form {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .acrostic-name-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #fdcb6e;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .acrostic-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .acrostic-line-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .acrostic-char {
+            background: #fdcb6e;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .acrostic-line-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .acrostic-line-input:focus {
+            outline: none;
+            border-color: #fdcb6e;
+        }
+
+        .acrostic-visibility {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .acrostic-submit-btn {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .acrostic-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
+        }
+
+        .acrostic-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .acrostic-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .acrostic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .acrostic-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .acrostic-card-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .acrostic-card-line {
+            font-size: 14px;
+            color: #636e72;
+            line-height: 1.6;
+        }
+
+        .acrostic-card-meta {
+            font-size: 12px;
+            color: #999;
+            text-align: right;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .acrostic-visibility-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .acrostic-visibility-badge.public {
+            background: #00b894;
+            color: white;
+        }
+
+        .acrostic-visibility-badge.private {
+            background: #636e72;
+            color: white;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                padding: 10px 20px;
+            }
+
+            .navbar-menu {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .navbar-menu a {
+                padding: 15px 18px;
+                font-size: 14px;
+            }
+
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .heart-btn {
+                margin-top: 10px;
+            }
+
+            .acrostic-list {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <h1>게시판</h1>
-            <div class="user-info">
-                <span id="welcomeMsg"></span>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-brand" onclick="location.href='home.html'">🌱 Sprout Handong</div>
+
+            <ul class="navbar-menu">
+                <li><a href="home.html" data-en="Home"><span class="menu-text">홈</span></a></li>
+                <li><a href="calendar.html" data-en="Memory Calendar"><span class="menu-text">추억 달력</span></a></li>
+                <li><a href="album.html" data-en="Album"><span class="menu-text">앨범</span></a></li>
+                <li><a href="board.html" data-en="Board"><span class="menu-text">게시판</span></a></li>
+            </ul>
+
+            <div class="navbar-user">
+                <span class="user-info" id="userInfo"></span>
+                <a href="settings.html" class="settings-btn">설정</a>
                 <button class="logout-btn" onclick="logout()">로그아웃</button>
             </div>
         </div>
-    </div>
+    </nav>
 
+    <!-- 메인 컨텐츠 -->
     <div class="container">
+        <!-- 삼행시 섹션 -->
+        <div class="acrostic-section">
+            <h2>✨ 삼행시 ✨</h2>
+
+            <div class="acrostic-form">
+                <input type="text" id="acrosticName" class="acrostic-name-input" placeholder="이름을 입력하세요 (예: 민수)" maxlength="5">
+                <div id="acrosticLines" class="acrostic-lines"></div>
+                <div class="acrostic-visibility">
+                    <input type="checkbox" id="acrosticPublic" checked>
+                    <label for="acrosticPublic">공개 (홈 화면에 표시)</label>
+                </div>
+                <button id="acrosticSubmit" class="acrostic-submit-btn">삼행시 작성하기</button>
+            </div>
+
+            <div id="acrosticList" class="acrostic-list"></div>
+        </div>
+
+        <!-- 글 작성 섹션 -->
         <div class="write-section">
-            <h2>글 작성</h2>
+            <h2>✍️ 게시글 작성</h2>
             <div id="message" class="message"></div>
             <form id="postForm">
                 <div class="form-group">
                     <label for="title">제목</label>
-                    <input type="text" id="title" name="title" required>
+                    <input type="text" id="title" name="title" required placeholder="제목을 입력하세요">
                 </div>
                 <div class="form-group">
                     <label for="content">내용</label>
-                    <textarea id="content" name="content" required></textarea>
+                    <textarea id="content" name="content" required placeholder="내용을 입력하세요"></textarea>
                 </div>
                 <button type="submit" class="submit-btn">작성하기</button>
             </form>
         </div>
 
+        <!-- 게시글 목록 -->
         <div class="posts-section">
-            <h2>전체 게시글</h2>
+            <h2>📝 우리 RC 게시판</h2>
             <div id="postsList"></div>
         </div>
     </div>
@@ -311,7 +670,7 @@
     <script>
         let currentUser = null;
 
-        // 페이지 로드시 로그인 체크
+        // 페이지 로드시
         window.onload = function() {
             const userStr = localStorage.getItem('user');
             if (!userStr) {
@@ -322,30 +681,40 @@
 
             currentUser = JSON.parse(userStr);
 
-            // 닉네임이 없으면 닉네임 설정 페이지로 리다이렉트
-            if (!currentUser.nickname) {
-                alert('먼저 닉네임을 설정해주세요.');
+            // 프로필 체크
+            if (!currentUser.nickname || !currentUser.rc) {
+                alert('먼저 프로필을 설정해주세요.');
                 window.location.href = 'nickname.html';
                 return;
             }
 
-            document.getElementById('welcomeMsg').textContent = `${currentUser.nickname}님 환영합니다!`;
+            const emoji = currentUser.emoji || '';
+            document.getElementById('userInfo').textContent = `${emoji} ${currentUser.nickname} (${currentUser.rc})`;
 
             loadPosts();
+            loadAcrostics();
+            setupAcrosticInput();
         };
 
         // 로그아웃
         function logout() {
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
+            if (confirm('로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('user');
+                window.location.href = 'index.html';
+            }
         }
 
         // 게시글 작성
         document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+
+            if (!title || !content) {
+                showMessage('제목과 내용을 모두 입력해주세요.', 'error');
+                return;
+            }
 
             try {
                 const response = await fetch('/api/posts', {
@@ -357,14 +726,15 @@
                         title,
                         content,
                         author: currentUser.nickname,
-                        authorId: currentUser.id
+                        authorId: currentUser.id,
+                        rc: currentUser.rc
                     })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    showMessage('게시글이 작성되었습니다!', 'success');
+                    showMessage('게시글이 작성되었습니다! 🎉', 'success');
                     document.getElementById('title').value = '';
                     document.getElementById('content').value = '';
                     loadPosts();
@@ -376,10 +746,10 @@
             }
         });
 
-        // 게시글 목록 불러오기
+        // 게시글 목록 불러오기 (RC 필터링)
         async function loadPosts() {
             try {
-                const response = await fetch('/api/posts');
+                const response = await fetch(`/api/posts?rc=${encodeURIComponent(currentUser.rc)}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -395,17 +765,53 @@
             const postsListDiv = document.getElementById('postsList');
 
             if (posts.length === 0) {
-                postsListDiv.innerHTML = '<div class="no-posts">작성된 게시글이 없습니다.</div>';
+                postsListDiv.innerHTML = '<div class="no-posts">아직 작성된 게시글이 없습니다.<br>첫 번째 게시글을 작성해보세요! ✍️</div>';
                 return;
             }
 
             postsListDiv.innerHTML = posts.map(post => `
-                <div class="post-item" onclick="showPostDetail(${post.id})">
-                    <div class="post-title">${escapeHtml(post.title)}</div>
+                <div class="post-item">
+                    <div class="post-header">
+                        <div class="post-title" onclick="showPostDetail(${post.id})">${escapeHtml(post.title)}</div>
+                        <div style="display: flex; align-items: center;">
+                            <button class="heart-btn ${post.likedBy && post.likedBy.includes(currentUser.id) ? 'liked' : ''}"
+                                    onclick="toggleHeart(${post.id})">
+                                <span>${post.likedBy && post.likedBy.includes(currentUser.id) ? '❤️' : '🤍'}</span>
+                                <span class="heart-count">${post.likes || 0}</span>
+                            </button>
+                            ${post.authorId === currentUser.id ? `<button class="delete-btn" onclick="deletePost(${post.id})">삭제</button>` : ''}
+                        </div>
+                    </div>
                     <div class="post-meta">작성자: ${escapeHtml(post.author)} | 작성일: ${formatDate(post.createdAt)}</div>
                     <div class="post-content-preview">${escapeHtml(post.content.substring(0, 100))}${post.content.length > 100 ? '...' : ''}</div>
                 </div>
             `).join('');
+        }
+
+        // 하트 토글
+        async function toggleHeart(postId) {
+            try {
+                const response = await fetch('/api/posts/like', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        postId: postId,
+                        userId: currentUser.id
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadPosts(); // 목록 새로고침
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('오류가 발생했습니다.');
+            }
         }
 
         // 게시글 상세 보기
@@ -417,7 +823,8 @@
                 if (data.success) {
                     const post = data.post;
                     document.getElementById('modalTitle').textContent = post.title;
-                    document.getElementById('modalMeta').textContent = `작성자: ${post.author} | 작성일: ${formatDate(post.createdAt)}`;
+                    document.getElementById('modalMeta').textContent =
+                        `작성자: ${post.author} | 작성일: ${formatDate(post.createdAt)} | 좋아요: ${post.likes || 0}`;
                     document.getElementById('modalBody').textContent = post.content;
                     document.getElementById('postModal').style.display = 'block';
                 }
@@ -467,6 +874,191 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // 게시글 삭제
+        async function deletePost(postId) {
+            if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/posts/${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: currentUser.id
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('게시글이 삭제되었습니다.', 'success');
+                    loadPosts();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('서버 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 삼행시 삭제
+        async function deleteAcrostic(acrosticId) {
+            if (!confirm('정말 이 삼행시를 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/acrostics/${acrosticId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: currentUser.id
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('삼행시가 삭제되었습니다.');
+                    loadAcrostics();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('서버 오류가 발생했습니다.');
+            }
+        }
+
+        // 삼행시 입력 필드 동적 생성
+        function setupAcrosticInput() {
+            const nameInput = document.getElementById('acrosticName');
+            const linesDiv = document.getElementById('acrosticLines');
+
+            nameInput.addEventListener('input', () => {
+                const name = nameInput.value.trim();
+                linesDiv.innerHTML = '';
+
+                if (name.length === 0) return;
+
+                for (let i = 0; i < name.length; i++) {
+                    const lineGroup = document.createElement('div');
+                    lineGroup.className = 'acrostic-line-group';
+                    lineGroup.innerHTML = `
+                        <div class="acrostic-char">${name[i]}</div>
+                        <input type="text" class="acrostic-line-input" data-index="${i}" placeholder="${name[i]}로 시작하는 문장을 입력하세요">
+                    `;
+                    linesDiv.appendChild(lineGroup);
+                }
+            });
+
+            document.getElementById('acrosticSubmit').addEventListener('click', submitAcrostic);
+        }
+
+        // 삼행시 작성
+        async function submitAcrostic() {
+            const name = document.getElementById('acrosticName').value.trim();
+            const isPublic = document.getElementById('acrosticPublic').checked;
+
+            if (!name) {
+                alert('이름을 입력해주세요!');
+                return;
+            }
+
+            const lineInputs = document.querySelectorAll('.acrostic-line-input');
+            if (lineInputs.length === 0) {
+                alert('이름을 입력해주세요!');
+                return;
+            }
+
+            const lines = [];
+            for (let input of lineInputs) {
+                const line = input.value.trim();
+                if (!line) {
+                    alert('모든 줄을 작성해주세요!');
+                    return;
+                }
+                lines.push(line);
+            }
+
+            try {
+                const response = await fetch('/api/acrostics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        lines,
+                        author: currentUser.nickname,
+                        authorId: currentUser.id,
+                        rc: currentUser.rc,
+                        isPublic
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('삼행시가 작성되었습니다! 🎉');
+                    document.getElementById('acrosticName').value = '';
+                    document.getElementById('acrosticLines').innerHTML = '';
+                    document.getElementById('acrosticPublic').checked = true;
+                    loadAcrostics();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('서버 오류가 발생했습니다.');
+            }
+        }
+
+        // 삼행시 목록 로드
+        async function loadAcrostics() {
+            try {
+                const response = await fetch(`/api/acrostics?rc=${encodeURIComponent(currentUser.rc)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayAcrostics(data.acrostics);
+                }
+            } catch (error) {
+                console.error('삼행시 로드 실패:', error);
+            }
+        }
+
+        // 삼행시 목록 표시
+        function displayAcrostics(acrostics) {
+            const listDiv = document.getElementById('acrosticList');
+
+            if (acrostics.length === 0) {
+                listDiv.innerHTML = '<div style="text-align:center; padding:40px; color:#999; grid-column: 1/-1;">아직 작성된 삼행시가 없습니다.<br>첫 번째 삼행시를 작성해보세요! ✨</div>';
+                return;
+            }
+
+            listDiv.innerHTML = acrostics.map(acrostic => `
+                <div class="acrostic-card">
+                    <div class="acrostic-card-title">
+                        ${escapeHtml(acrostic.name)}
+                        <span class="acrostic-visibility-badge ${acrostic.isPublic ? 'public' : 'private'}">
+                            ${acrostic.isPublic ? '공개' : '비공개'}
+                        </span>
+                    </div>
+                    <div class="acrostic-card-lines">
+                        ${acrostic.lines.map((line, idx) => `
+                            <div class="acrostic-card-line">
+                                <strong>${escapeHtml(acrostic.name[idx])}</strong> ${escapeHtml(line)}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="acrostic-card-meta">
+                        작성자: ${escapeHtml(acrostic.author)} | ${formatDate(acrostic.createdAt)}
+                        ${acrostic.authorId === currentUser.id ? `<button class="delete-btn" onclick="deleteAcrostic(${acrostic.id})" style="margin-left: 10px; font-size: 11px; padding: 3px 8px;">삭제</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
         }
     </script>
 </body>
