@@ -51,17 +51,48 @@
             gap: 0;
         }
 
+        .navbar-menu li {
+            position: relative;
+        }
+
         .navbar-menu a {
             color: white;
             text-decoration: none;
             padding: 20px 25px;
             display: block;
-            transition: background 0.3s;
+            transition: background 0.3s, color 0.3s;
             cursor: pointer;
+            position: relative;
         }
 
         .navbar-menu a:hover {
             background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-menu a::before {
+            content: attr(data-en);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            font-size: 18px;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .navbar-menu a:hover::before {
+            opacity: 1;
+        }
+
+        .navbar-menu a:hover .menu-text {
+            opacity: 0;
+        }
+
+        .menu-text {
+            transition: opacity 0.3s;
         }
 
         .navbar-menu a.active {
@@ -168,10 +199,10 @@
         <div class="navbar-content">
             <div class="navbar-brand" onclick="loadPage('home')">🌱 Sprout Handong</div>
             <ul class="navbar-menu">
-                <li><a onclick="loadPage('home')" data-page="home" class="active">홈</a></li>
-                <li><a onclick="loadPage('calendar')" data-page="calendar">추억 달력</a></li>
-                <li><a onclick="loadPage('album')" data-page="album">앨범</a></li>
-                <li><a onclick="loadPage('board')" data-page="board">게시판</a></li>
+                <li><a onclick="loadPage('home')" data-page="home" data-en="Home" class="active"><span class="menu-text">홈</span></a></li>
+                <li><a onclick="loadPage('calendar')" data-page="calendar" data-en="Calendar"><span class="menu-text">추억 달력</span></a></li>
+                <li><a onclick="loadPage('album')" data-page="album" data-en="Album"><span class="menu-text">앨범</span></a></li>
+                <li><a onclick="loadPage('board')" data-page="board" data-en="Board"><span class="menu-text">게시판</span></a></li>
             </ul>
 
             <div class="navbar-user">
