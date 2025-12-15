@@ -223,11 +223,40 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
 
         .dday-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .dday-delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dday-card:hover .dday-delete-btn {
+            opacity: 1;
+        }
+
+        .dday-delete-btn:hover {
+            background: #ee5a52;
+            transform: scale(1.1);
         }
 
         .dday-card-name {
@@ -609,6 +638,7 @@
 
                     return `
                         <div class="dday-card">
+                            <button class="dday-delete-btn" onclick="deleteDday('${item.id}')" title="삭제">✕</button>
                             <div class="dday-card-name">${escapeHtml(item.name)}</div>
                             <div class="dday-card-date">${dateStr}</div>
                             <div class="dday-card-counter ${ddayClass}">${ddayText}</div>
@@ -619,6 +649,28 @@
                 console.error('D-day 로드 실패:', error);
                 document.getElementById('ddayList').innerHTML =
                     '<div class="no-dday-message">기념일을 불러올 수 없습니다.</div>';
+            }
+        }
+
+        // D-day 삭제 함수
+        function deleteDday(id) {
+            if (!confirm('정말 이 기념일을 삭제하시겠습니까?')) {
+                return;
+            }
+
+            const STORAGE_KEY = "handong_anniv_v1";
+            const saved = localStorage.getItem(STORAGE_KEY);
+
+            if (!saved) return;
+
+            try {
+                let items = JSON.parse(saved);
+                items = items.filter(item => String(item.id) !== String(id));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+                loadDdayList();
+            } catch (error) {
+                console.error('D-day 삭제 실패:', error);
+                alert('삭제에 실패했습니다.');
             }
         }
     </script>
