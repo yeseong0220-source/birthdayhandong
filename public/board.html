@@ -842,8 +842,12 @@
 
         // 삼행시 작성
         async function submitAcrostic() {
+            console.log('삼행시 작성 시작');
             const name = document.getElementById('acrosticName').value.trim();
             const isPublic = document.getElementById('acrosticPublic').checked;
+
+            console.log('입력된 이름:', name);
+            console.log('공개 설정:', isPublic);
 
             if (!name) {
                 alert('이름을 입력해주세요!');
@@ -851,6 +855,8 @@
             }
 
             const lineInputs = document.querySelectorAll('.acrostic-line-input');
+            console.log('입력 필드 개수:', lineInputs.length);
+
             if (lineInputs.length === 0) {
                 alert('이름을 입력해주세요!');
                 return;
@@ -866,7 +872,19 @@
                 lines.push(line);
             }
 
+            console.log('작성된 줄:', lines);
+
             try {
+                console.log('API 호출 준비:', {
+                    name,
+                    lines,
+                    author: currentUser.nickname,
+                    authorId: currentUser.id,
+                    rc: currentUser.rc,
+                    isPublic,
+                    authorTeamId: currentUser.teamId || null
+                });
+
                 const response = await fetch('/api/acrostics', {
                     method: 'POST',
                     headers: {
@@ -883,7 +901,9 @@
                     })
                 });
 
+                console.log('응답 상태:', response.status);
                 const data = await response.json();
+                console.log('응답 데이터:', data);
 
                 if (data.success) {
                     alert('삼행시가 작성되었습니다! 🎉');
@@ -892,10 +912,11 @@
                     document.getElementById('acrosticPublic').checked = true;
                     loadAcrostics();
                 } else {
-                    alert(data.message);
+                    alert(data.message || '삼행시 작성에 실패했습니다.');
                 }
             } catch (error) {
-                alert('서버 오류가 발생했습니다.');
+                console.error('삼행시 작성 오류:', error);
+                alert('서버 오류가 발생했습니다: ' + error.message);
             }
         }
 
