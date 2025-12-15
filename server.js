@@ -19,18 +19,16 @@ const TEAMS_FILE = path.join(__dirname, 'data', 'teams.json');
 
 // 데이터 파일 초기화
 function initDataFiles() {
-    if (!fs.existsSync(USERS_FILE)) {
-        fs.writeFileSync(USERS_FILE, JSON.stringify([], null, 2));
+    const dataDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
     }
-    if (!fs.existsSync(POSTS_FILE)) {
-        fs.writeFileSync(POSTS_FILE, JSON.stringify([], null, 2));
-    }
-    if (!fs.existsSync(ACROSTICS_FILE)) {
-        fs.writeFileSync(ACROSTICS_FILE, JSON.stringify([], null, 2));
-    }
-    if (!fs.existsSync(TEAMS_FILE)) {
-        fs.writeFileSync(TEAMS_FILE, JSON.stringify([], null, 2));
-    }
+
+    [USERS_FILE, POSTS_FILE, ACROSTICS_FILE, TEAMS_FILE].forEach(file => {
+        if (!fs.existsSync(file)) {
+            fs.writeFileSync(file, '[]');
+        }
+    });
 }
 
 // 데이터 읽기 함수
@@ -76,22 +74,19 @@ app.post('/api/signup', (req, res) => {
     const { username, password, name } = req.body;
 
     if (!username || !password || !name) {
-        return res.status(400).json({ success: false, message: '모든 필드를 입력해주세요.' });
+        return res.json({ success: false, message: '모든 필드를 입력해주세요.' });
     }
 
     const users = readUsers();
 
-    // 중복 아이디 체크
-    const existingUser = users.find(u => u.username === username);
-    if (existingUser) {
-        return res.status(400).json({ success: false, message: '이미 존재하는 아이디입니다.' });
+    if (users.find(u => u.username === username)) {
+        return res.json({ success: false, message: '이미 존재하는 아이디입니다.' });
     }
 
-    // 새 사용자 추가
     users.push({
         id: Date.now(),
         username,
-        password, // 실제로는 암호화해야 하지만 예제용으로 단순화
+        password,
         name,
         createdAt: new Date().toISOString()
     });
@@ -104,33 +99,19 @@ app.post('/api/signup', (req, res) => {
 app.post('/api/set-profile', (req, res) => {
     const { userId, nickname, rc, teamMode, teamName, teamId } = req.body;
 
-    // 입력값 검증
     if (!userId || !nickname || !rc) {
-        return res.status(400).json({ success: false, message: '필수 정보가 없습니다.' });
-    }
-
-    // 공백 체크
-    if (nickname.trim() === '') {
-        return res.status(400).json({ success: false, message: '닉네임을 입력해주세요.' });
+        return res.json({ success: false, message: '필수 정보가 없습니다.' });
     }
 
     const users = readUsers();
     const userIndex = users.findIndex(u => u.id === userId);
 
     if (userIndex === -1) {
-        return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        return res.json({ success: false, message: '사용자를 찾을 수 없습니다.' });
     }
 
-    // 닉네임 중복 체크
-    const existingNickname = users.find(u => u.nickname === nickname.trim() && u.id !== userId);
-    if (existingNickname) {
-        return res.status(400).json({ success: false, message: '이미 사용중인 닉네임입니다.' });
-    }
-
-    // RC 유효성 검증
-    const validRCs = ['토레이 College', '손양원 College', '카이퍼 College', '열송학사', '장기려 College', '카마이클 College'];
-    if (!validRCs.includes(rc)) {
-        return res.status(400).json({ success: false, message: '올바른 RC를 선택해주세요.' });
+    if (users.find(u => u.nickname === nickname.trim() && u.id !== userId)) {
+        return res.json({ success: false, message: '이미 사용중인 닉네임입니다.' });
     }
 
     users[userIndex].nickname = nickname.trim();
@@ -144,15 +125,12 @@ app.post('/api/set-profile', (req, res) => {
         const teams = readTeams();
 
         if (teamMode === 'create') {
-            // 새 팀 생성
             if (!teamName || teamName.trim() === '') {
-                return res.status(400).json({ success: false, message: '팀 이름을 입력해주세요.' });
+                return res.json({ success: false, message: '팀 이름을 입력해주세요.' });
             }
 
-            // 같은 RC에서 같은 이름의 팀이 있는지 확인
-            const existingTeam = teams.find(t => t.rc === rc && t.name === teamName.trim());
-            if (existingTeam) {
-                return res.status(400).json({ success: false, message: '이미 존재하는 팀 이름입니다.' });
+            if (teams.find(t => t.rc === rc && t.name === teamName.trim())) {
+                return res.json({ success: false, message: '이미 존재하는 팀 이름입니다.' });
             }
 
             const newTeam = {
@@ -169,18 +147,12 @@ app.post('/api/set-profile', (req, res) => {
             finalTeamId = newTeam.id;
             finalTeamName = newTeam.name;
 
-        } else if (teamMode === 'join') {
-            // 기존 팀 참여
-            if (!teamId) {
-                return res.status(400).json({ success: false, message: '팀을 선택해주세요.' });
-            }
-
+        } else if (teamMode === 'join' && teamId) {
             const teamIndex = teams.findIndex(t => t.id === parseInt(teamId));
             if (teamIndex === -1) {
-                return res.status(404).json({ success: false, message: '팀을 찾을 수 없습니다.' });
+                return res.json({ success: false, message: '팀을 찾을 수 없습니다.' });
             }
 
-            // 이미 멤버인지 확인
             if (!teams[teamIndex].members.includes(userId)) {
                 teams[teamIndex].members.push(userId);
                 writeTeams(teams);
@@ -288,19 +260,18 @@ app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res.status(400).json({ success: false, message: '아이디와 비밀번호를 입력해주세요.' });
+        return res.json({ success: false, message: '아이디와 비밀번호를 입력해주세요.' });
     }
 
     const users = readUsers();
     const user = users.find(u => u.username === username && u.password === password);
 
     if (!user) {
-        return res.status(401).json({ success: false, message: '아이디 또는 비밀번호가 일치하지 않습니다.' });
+        return res.json({ success: false, message: '아이디 또는 비밀번호가 일치하지 않습니다.' });
     }
 
     res.json({
         success: true,
-        message: '로그인 성공',
         user: {
             id: user.id,
             username: user.username,
