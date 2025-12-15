@@ -834,7 +834,7 @@
 
             nameInput.addEventListener('input', (e) => {
                 console.log('이름 입력 이벤트 발생:', e.target.value);
-                const name = nameInput.value.trim();
+                const name = e.target.value;
                 linesDiv.innerHTML = '';
 
                 if (name.length === 0) {
