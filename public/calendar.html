@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,7 +27,12 @@
       --tag-text: #5A43CB;
     }
 
-    * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      outline: none;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Inter', 'Noto Sans KR', sans-serif;
@@ -52,7 +58,9 @@
     }
 
     @media (min-width: 768px) {
-      .container { grid-template-columns: 340px 1fr; }
+      .container {
+        grid-template-columns: 340px 1fr;
+      }
     }
 
     .card {
@@ -94,6 +102,8 @@
 
     input {
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px 12px;
@@ -175,7 +185,11 @@
       border-color: #D1D1D1;
     }
 
-    .item-left { display: flex; flex-direction: column; gap: 4px; }
+    .item-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
     .item-name {
       font-weight: 600;
@@ -218,7 +232,9 @@
       cursor: pointer;
     }
 
-    .item:hover .del-btn { opacity: 1; }
+    .item:hover .del-btn {
+      opacity: 1;
+    }
 
     .del-btn:hover {
       color: var(--danger);
@@ -289,8 +305,31 @@
       outline: 2px solid #FFB5B5;
       outline-offset: 1px;
     }
+
+    .nav-btn {
+      background: #f0ebfa;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(102, 126, 234, 0.2);
+    }
   </style>
 </head>
+
 <body>
   <div class="page-wrapper">
     <div class="container">
@@ -336,34 +375,24 @@
 
   <script>
     // 로그인 체크
-    window.onload = function() {
-        const userStr = localStorage.getItem('user');
-        if (!userStr) {
-            alert('로그인이 필요합니다.');
-            window.location.href = 'index.html';
-            return;
-        }
+    window.onload = function () {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        alert('로그인이 필요합니다.');
+        window.location.href = 'index.html';
+        return;
+      }
 
-        const currentUser = JSON.parse(userStr);
-        if (!currentUser.nickname || !currentUser.rc) {
-            alert('먼저 프로필을 설정해주세요.');
-            window.location.href = 'nickname.html';
-            return;
-        }
+      const currentUser = JSON.parse(userStr);
+      if (!currentUser.nickname || !currentUser.rc) {
+        alert('먼저 프로필을 설정해주세요.');
+        window.location.href = 'nickname.html';
+        return;
+      }
 
-        const emoji = currentUser.emoji || '';
-        document.getElementById('userInfo').textContent = `${emoji} ${currentUser.nickname}`;
-
-        // 기념일 기능 초기화
-        loadItems();
+      // 기념일 기능 초기화
+      loadItems();
     };
-
-    function logout() {
-        if (confirm('로그아웃 하시겠습니까?')) {
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
-        }
-    }
 
     // 기념일 기능
     const STORAGE_KEY = "handong_anniv_v1";
@@ -509,11 +538,11 @@
 
       let html = `
         <div class="calendar-header">
-          <button id="prevMonth" class="ghost" style="padding:4px 8px;font-size:12px;">◀</button>
-          <span>${monthStr}</span>
-          <button id="nextMonth" class="ghost" style="padding:4px 8px;font-size:12px;">▶</button>
+          <button id="prevMonth" class="nav-btn">◀</button>
+          <span style="font-size: 15px; font-weight: 700; color: #2d3436;">${monthStr}</span>
+          <button id="nextMonth" class="nav-btn">▶</button>
         </div>
-        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px; text-align: center;">
           ● 표시된 날에 기념일이 있어요
         </div>
         <div class="calendar-grid">
@@ -586,4 +615,5 @@
     });
   </script>
 </body>
+
 </html>
